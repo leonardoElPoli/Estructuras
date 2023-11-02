@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Seccion 1</title>
+    <style>
+        body {
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f2f2f2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        #header {
+            background: linear-gradient(135deg, #0074ff, #00e2d0);
+            color: #fff;
+            padding: 10px;
+            text-align: left;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        #imagen {
+            width: 60%;
+            max-width: 400px;
+            margin: 20px auto;
+            display: block;
+        }
+
+        #parametros {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            text-align: left;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        .input-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            max-width: 150px;
+        }
+
+        .button-container {
+            text-align: center;
+        }
+
+        button {
+            background: #0074ff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button[disabled] {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        button:hover {
+            background: #00e2d0;
+        }
+
+        #tabla-container {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #f2f2f2;
+            border: 1px solid #0074ff;
+        }
+
+        th, td {
+            border: 1px solid #0074ff;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #0074ff;
+            color: #fff;
+        }
+
+        #toggle-table-button {
+            background: #0074ff;
+            color: #fff;
+            padding: 10px 18px; /* Añadido espacio en blanco */
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #toggle-table-button:hover {
+            background: #00e2d0;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <a href="/"></a>
+        <button onclick="window.location.href = '/'">Volver</button>
+    </div>
+    <img id="imagen" src="{{ url_for('static', filename='Imagen2.jpg') }}" alt="Imagen1">
+    <div id="parametros">
+        <div class="input-container">
+            <label for="Ybarra">Ybarra:</label>
+            <input type="text" id="Ybarra" name="Ybarra">
+        </div>
+
+        <div class="input-container">
+            <label for="InerciaY">Inercia Y:</label>
+            <input type="text" id="InerciaY" name="InerciaY">
+        </div>
+
+        <div class="input-container">
+            <label for="Qy">Qy:</label>
+            <input type="text" id="Qy" name="Qy">
+        </div>
+
+        <div class="button-container">
+            <button id="calcular-button" onclick="calcularTabla()">Calcular</button>
+        </div>
+    </div>
+
+    <div id="tabla-container">
+        <button id="toggle-table-button" onclick="toggleTabla()">Volver a Calcular</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>Figura</th>
+                    <th>Yi</th>
+                    <th>Ai</th>
+                    <th>li</th>
+                    <th>Ai*Yi</th>
+                    <th>Ai(Y-Yi)^2</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Valor 2</td>
+                    <td>Valor 3</td>
+                    <td>Valor 4</td>
+                    <td>Valor 5</td>
+                    <td>Valor 6</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Valor 8</td>
+                    <td>Valor 9</td>
+                    <td>Valor 10</td>
+                    <td>Valor 11</td>
+                    <td>Valor 12</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Valor 14</td>
+                    <td>Valor 15</td>
+                    <td>Valor 16</td>
+                    <td>Valor 17</td>
+                    <td>Valor 18</td>
+                </tr>
+                <tr>
+                    <td>∑</td>
+                    <td>Valor 20</td>
+                    <td>Valor 21</td>
+                    <td>Valor 22</td>
+                    <td>Valor 23</td>
+                    <td>Valor 24</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function calcularTabla() {
+            document.getElementById("tabla-container").style.display = "block";
+            document.getElementById("calcular-button").disabled = true;
+            document.getElementById("Ybarra").disabled = true;
+            document.getElementById("InerciaY").disabled = true;
+            document.getElementById("Qy").disabled = true;
+        }
+
+        function toggleTabla() {
+            var tablaContainer = document.getElementById("tabla-container");
+            var toggleButton = document.getElementById("toggle-table-button");
+            if (tablaContainer.style.display === "block") {
+                tablaContainer.style.display = "none";
+                toggleButton.textContent = "Volver a Calcular";
+                document.getElementById("calcular-button").disabled = false;
+                document.getElementById("Ybarra").disabled = false;
+                document.getElementById("InerciaY").disabled = false;
+                document.getElementById("Qy").disabled = false;
+            } else {
+                tablaContainer.style.display = "block";
+                toggleButton.textContent = "Mostrar Tabla";
+                document.getElementById("calcular-button").disabled = true;
+                document.getElementById("Ybarra").disabled = true;
+                document.getElementById("InerciaY").disabled = true;
+                document.getElementById("Qy").disabled = true;
+            }
+        }
+    </script>
+</body>
+</html>
