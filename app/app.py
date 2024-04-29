@@ -3,7 +3,7 @@ import re
 import pathlib
 import requests
 from flask import Flask, make_response, redirect, render_template, session, abort, request
-from flask_mysqldb import MySQL
+import pymysql
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
 import google.auth.transport.requests
@@ -16,7 +16,18 @@ app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'estructuras'
-mysql = MySQL(app)
+
+mysql = pymysql.connect(
+    host=app.config['MYSQL_HOST'],
+    user=app.config['MYSQL_USER'],
+    password=app.config['MYSQL_PASSWORD'],
+    db=app.config['MYSQL_DB']
+)
+
+if mysql is not None:
+    print("Conexión exitosa")
+else:
+    print("Error al conectar")
 
 constante_estudiante = 'ESTUDIANTE'
 constante_docente = 'DOCENTE'
@@ -81,7 +92,7 @@ def callback():
     #if not re.search(r'@elpoli.edu.co', user_email):
         #return render_template('mensaje_error.html')
 
-    cur2 = mysql.connection.cursor()
+    cur2 = mysql.cursor()
     cur2.execute('SELECT nombre,correo,tipo_usuario FROM usuarios WHERE id = %s', (user_id,))
     result = cur2.fetchone()
     cur2.close()
@@ -102,9 +113,9 @@ def callback():
         
         if re.search(r'\d', user_email):
             insertar_reporte_usuario(user_name,user_email)
-            cur = mysql.connection.cursor()
+            cur = mysql.cursor()
             cur.execute('INSERT INTO usuarios (id, nombre, correo, tipo_usuario) VALUES (%s, %s, %s, %s)', (user_id, user_name, user_email, constante_estudiante))
-            mysql.connection.commit()
+            mysql.commit()
             cur.close()
             response = make_response(redirect("/"))
             response.set_cookie("user_token", user_id, max_age=3600)
@@ -112,9 +123,9 @@ def callback():
             #return response
 
         else:
-            cur = mysql.connection.cursor()
+            cur = mysql.cursor()
             cur.execute('INSERT INTO usuarios (id, nombre, correo, tipo_usuario) VALUES (%s, %s, %s, %s)', (user_id, user_name, user_email, constante_docente))
-            mysql.connection.commit()
+            mysql.commit()
             cur.close()
             response = make_response(redirect("/"))
             response.set_cookie("user_token", user_id, max_age=3600)
@@ -124,9 +135,9 @@ def callback():
 
 def insertar_reporte_usuario(user_name, user_email):
     try:
-        cur = mysql.connection.cursor()
+        cur = mysql.cursor()
         cur.execute('INSERT INTO registro_ingresos (nombre, correo) VALUES (%s, %s)', (user_name, user_email))
-        mysql.connection.commit()
+        mysql.commit()
         cur.close()
     except Exception as e:
         print("Error al insertar datos:", e)
@@ -151,7 +162,7 @@ def seccion2():
 
 @app.route('/generar_reporte')
 def generar_reporte():
-    cur = mysql.connection.cursor()
+    cur = mysql.cursor()
     cur.execute('SELECT * FROM registro_ingresos')
     data = cur.fetchall()
     cur.close()

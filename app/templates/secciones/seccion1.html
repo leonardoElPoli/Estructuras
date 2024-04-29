@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Seccion 1</title>
+    <title>Viga simplemente apoyada con carga distribuida rectangular en toda su longitud</title>
     <style>
         body {
             text-align: center;
@@ -9,11 +10,8 @@
             padding: 0;
             font-family: 'Arial', sans-serif;
             background-color: #f2f2f2;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
+            padding-top: 50px;
+            /* Agregamos un espacio en la parte superior para dejar lugar al header */
         }
 
         #header {
@@ -21,16 +19,19 @@
             color: #fff;
             padding: 10px;
             text-align: left;
-            width: 100%;
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
+            width: 100%;
+            z-index: 1000;
+            /* Asegura que el header esté sobre otros elementos */
         }
 
         #imagen {
             width: 60%;
             max-width: 400px;
             margin: 20px auto;
+            /* Ajustamos el margen superior e inferior para centrar la imagen */
             display: block;
         }
 
@@ -39,20 +40,19 @@
             gap: 20px;
         }
 
-        .contenedor-tablas-divs {
-            display: flex;
-            gap: 20px;
-        }
-
         #parametros {
-            margin-top: 20px;
+            margin: 20px auto;
+            /* Centramos horizontalmente el contenedor */
             padding: 20px;
             background-color: #fff;
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             text-align: left;
             max-width: 400px;
-            width: 250px;
+            width: 90%;
+            /* Usamos un ancho del 90% para que se ajuste mejor en pantallas pequeñas */
+            position: relative;
+            /* Cambiamos la posición a relativa */
         }
 
         label {
@@ -76,6 +76,7 @@
 
         .button-container {
             text-align: center;
+            margin-top: 20px;
         }
 
         button {
@@ -96,271 +97,201 @@
             background: #00e2d0;
         }
 
-        #tabla-container-x {
-            display: none;
+        .resultado-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
             margin-top: 20px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
 
-        #tabla-container-y {
-            display: none;
-            margin-top: 20px;
-            text-align: center;
+        .resultado-box h2 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center; /* Centramos horizontalmente el título */
         }
 
-        table {
+        .resultado-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center; /* Centramos horizontalmente el contenido */
+        }
+
+        .resultado-item h3 {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333333;
+        }
+
+        .resultado-item span {
+            font-size: 18px;
+            color: #0074ff;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            border-collapse: collapse;
-            background-color: #f2f2f2;
-            border: 1px solid #0074ff;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
         }
 
-        th, td {
-            border: 1px solid #0074ff;
-            padding: 8px;
+        .popup-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            text-align: center;
         }
 
-        th {
-            background-color: #0074ff;
-            color: #fff;
+        .popup h2 {
+            font-size: 24px;
         }
 
-        #toggle-table-button-y {
-            background: #0074ff;
-            color: #fff;
-            padding: 10px 18px; /* Añadido espacio en blanco */
-            border: none;
-            border-radius: 4px;
+        .popup p {
+            font-size: 18px;
+        }
+
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
             cursor: pointer;
         }
 
-        #toggle-table-button-y:hover {
-            background: #00e2d0;
-        }
-
-        #toggle-table-button-x {
-            background: #0074ff;
-            color: #fff;
-            padding: 10px 18px; /* Añadido espacio en blanco */
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        #toggle-table-button-x:hover {
-            background: #00e2d0;
+        .popup-close:hover {
+            color: #0074ff;
         }
     </style>
 </head>
+
 <body>
+    <script type="text/javascript" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
     <div id="header">
         <a href="/"></a>
         <button onclick="window.location.href = '/'">Volver</button>
     </div>
     <img id="imagen" src="{{ url_for('static', filename='Imagen1.jpg') }}" alt="Imagen1">
-    
+
     <div class="contenedor-divs">
         <div id="parametros">
             <div class="input-container">
-                <label for="Ybarra">Ybarra:</label>
-                <input type="text" id="Ybarra" name="Ybarra">
+                <label for="W">W:</label>
+                <input type="text" id="W" name="W"
+                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                    onpaste="return false">
             </div>
-    
-            <div class="input-container">
-                <label for="InerciaY">Inercia Y:</label>
-                <input type="text" id="InerciaY" name="InerciaY">
-            </div>
-    
-            <div class="input-container">
-                <label for="Qy">Qy:</label>
-                <input type="text" id="Qy" name="Qy">
-            </div>
-    
-            <div class="button-container">
-                <button id="calcular-button-y" onclick="calcularTablaY()">Calcular</button>
-            </div>
-        </div>
 
-        <div id="parametros">
             <div class="input-container">
-                <label for="Xbarra">Xbarra:</label>
-                <input type="text" id="Xbarra" name="Xbarra">
+                <label for="L">L:</label>
+                <input type="text" id="L" name="L"
+                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                    onpaste="return false">
             </div>
-    
+
             <div class="input-container">
-                <label for="InerciaX">Inercia X:</label>
-                <input type="text" id="InerciaX" name="InerciaX">
+                <div class="resultado-box">
+                    <h2>Resultados</h2>
+                    <div class="resultado-item">
+                        <h3>RAy</h3>
+                        <span id="rayResultado"></span>
+                    </div>
+                    <div class="resultado-item">
+                        <h3>RBy</h3>
+                        <span id="rByResultado"></span>
+                    </div>
+                </div>
             </div>
-    
-            <div class="input-container">
-                <label for="Qx">Qx:</label>
-                <input type="text" id="Qx" name="Qx">
-            </div>
-    
             <div class="button-container">
-                <button id="calcular-button-x" onclick="calcularTablaX()">Calcular</button>
+                <button id="recalcular" onclick="recalcular()" disabled>Recalcular</button>
             </div>
+
+            <div class="button-container">
+                <button id="calcular" onclick="calcularTabla()">Calcular</button>
+            </div>
+
         </div>
     </div>
-    
-    <div class="contenedor-tablas-divs">
-        <div id="tabla-container-y">
-            <button id="toggle-table-button-y" onclick="toggleTablaY()">Volver a Calcular</button>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Figura</th>
-                        <th>Yi</th>
-                        <th>Ai</th>
-                        <th>li</th>
-                        <th>Ai*Yi</th>
-                        <th>Ai(Y-Yi)^2</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Valor 2</td>
-                        <td>Valor 3</td>
-                        <td>Valor 4</td>
-                        <td>Valor 5</td>
-                        <td>Valor 6</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Valor 8</td>
-                        <td>Valor 9</td>
-                        <td>Valor 10</td>
-                        <td>Valor 11</td>
-                        <td>Valor 12</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Valor 14</td>
-                        <td>Valor 15</td>
-                        <td>Valor 16</td>
-                        <td>Valor 17</td>
-                        <td>Valor 18</td>
-                    </tr>
-                    <tr>
-                        <td>∑</td>
-                        <td>Valor 20</td>
-                        <td>Valor 21</td>
-                        <td>Valor 22</td>
-                        <td>Valor 23</td>
-                        <td>Valor 24</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div id="tabla-container-x">
-            <button id="toggle-table-button-x" onclick="toggleTablaX()">Volver a Calcular</button>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Figura</th>
-                        <th>Yi</th>
-                        <th>Ai</th>
-                        <th>li</th>
-                        <th>Ai*Yi</th>
-                        <th>Ai(Y-Yi)^2</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Valor 2</td>
-                        <td>Valor 3</td>
-                        <td>Valor 4</td>
-                        <td>Valor 5</td>
-                        <td>Valor 6</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Valor 8</td>
-                        <td>Valor 9</td>
-                        <td>Valor 10</td>
-                        <td>Valor 11</td>
-                        <td>Valor 12</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Valor 14</td>
-                        <td>Valor 15</td>
-                        <td>Valor 16</td>
-                        <td>Valor 17</td>
-                        <td>Valor 18</td>
-                    </tr>
-                    <tr>
-                        <td>∑</td>
-                        <td>Valor 20</td>
-                        <td>Valor 21</td>
-                        <td>Valor 22</td>
-                        <td>Valor 23</td>
-                        <td>Valor 24</td>
-                    </tr>
-                </tbody>
-            </table>
+
+    <!-- Popup para mostrar el mensaje de error -->
+    <div class="popup" id="errorPopup">
+        <div class="popup-content">
+            <span class="popup-close" onclick="cerrarPopup()">X</span>
+            <h2>Error</h2>
+            <p>Ingresa valores numéricos para W y L.</p>
         </div>
     </div>
-    
 
     <script>
-        function calcularTablaY() {
-            document.getElementById("tabla-container-y").style.display = "block";
-            document.getElementById("calcular-button-y").disabled = true;
-            document.getElementById("Ybarra").disabled = true;
-            document.getElementById("InerciaY").disabled = true;
-            document.getElementById("Qy").disabled = true;
-        }
+        function calcularTabla() {
+            // Obtener los valores de W y L
+            var w = parseFloat(document.getElementById("W").value);
+            var l = parseFloat(document.getElementById("L").value);
 
-        function calcularTablaX() {
-            document.getElementById("tabla-container-x").style.display = "block";
-            document.getElementById("calcular-button-x").disabled = true;
-            document.getElementById("Xbarra").disabled = true;
-            document.getElementById("InerciaX").disabled = true;
-            document.getElementById("Qx").disabled = true;
-        }
-
-        function toggleTablaY() {
-            var tablaContainer = document.getElementById("tabla-container-y");
-            var toggleButton = document.getElementById("toggle-table-button-y");
-            if (tablaContainer.style.display === "block") {
-                tablaContainer.style.display = "none";
-                toggleButton.textContent = "Volver a Calcular";
-                document.getElementById("calcular-button-y").disabled = false;
-                document.getElementById("Ybarra").disabled = false;
-                document.getElementById("InerciaY").disabled = false;
-                document.getElementById("Qy").disabled = false;
-            } else {
-                tablaContainer.style.display = "block";
-                toggleButton.textContent = "Mostrar Tabla";
-                document.getElementById("calcular-button-y").disabled = true;
-                document.getElementById("Ybarra").disabled = true;
-                document.getElementById("InerciaY").disabled = true;
-                document.getElementById("Qy").disabled = true;
+            // Verificar que los valores sean numéricos
+            if (isNaN(w) || isNaN(l)) {
+                mostrarPopup();
+                return;
             }
+
+            // Realizar los cálculos
+            var ray = w * l / 2;
+            var rBy = w * l / 2;
+
+            // Mostrar los resultados
+            document.getElementById("rayResultado").textContent = ray;
+            document.getElementById("rByResultado").textContent = rBy;
+
+            // Deshabilitar campos y botón calcular
+            document.getElementById("W").disabled = true;
+            document.getElementById("L").disabled = true;
+            document.getElementById("calcular").disabled = true;
+
+            // Habilitar botón Recalcular
+            document.getElementById("recalcular").disabled = false;
         }
 
-        function toggleTablaX() {
-            var tablaContainerX = document.getElementById("tabla-container-x");
-            var toggleButtonX = document.getElementById("toggle-table-button-x");
-            if (tablaContainerX.style.display === "block") {
-                tablaContainerX.style.display = "none";
-                toggleButtonX.textContent = "Volver a Calcular";
-                document.getElementById("calcular-button-x").disabled = false;
-                document.getElementById("Xbarra").disabled = false;
-                document.getElementById("InerciaX").disabled = false;
-                document.getElementById("Qx").disabled = false;
-            } else {
-                tablaContainerX.style.display = "block";
-                toggleButtonX.textContent = "Mostrar Tabla";
-                document.getElementById("calcular-button-x").disabled = true;
-                document.getElementById("Xbarra").disabled = true;
-                document.getElementById("InerciaX").disabled = true;
-                document.getElementById("Qx").disabled = true;
-            }
+        function mostrarPopup() {
+            document.getElementById("errorPopup").style.display = "block";
+        }
+
+        function cerrarPopup() {
+            document.getElementById("errorPopup").style.display = "none";
+        }
+
+        function recalcular() {
+            // Habilitar campos y botón calcular
+            document.getElementById("W").disabled = false;
+            document.getElementById("L").disabled = false;
+            document.getElementById("calcular").disabled = false;
+
+            // Deshabilitar botón Recalcular
+            document.getElementById("recalcular").disabled = true;
+
+            // Limpiar resultados
+            document.getElementById("rayResultado").textContent = "";
+            document.getElementById("rByResultado").textContent = "";
         }
     </script>
 </body>
+
 </html>
