@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reporte de Usuarios</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0074ff, #00e2d0);
+            color: #fff;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #0074ff, #00e2d0);
+            color: #fff;
+            padding: 20px;
+            margin: 0;
+            flex: 1; /* Para centrar horizontalmente */
+        }
+
+        .back-button {
+            background: #0074ff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 10px 20px;
+            text-decoration: none;
+            margin-right: 20px; /* Agregamos espacio entre el botón y el título */
+        }
+
+        .back-button:hover {
+            background: #00e2d0;
+        }
+
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px 20px;
+        }
+
+        th {
+            background-color: #0074ff;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="/" class="back-button">Volver</a>
+        <h1>Reporte de Usuarios</h1>
+    </div>
+    <div class="container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Fecha Ingreso</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
