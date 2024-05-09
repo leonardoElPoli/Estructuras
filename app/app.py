@@ -12,10 +12,10 @@ app = Flask(__name__)
 app.secret_key = "leo"
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'estructuras'
+app.config['MYSQL_HOST'] = 'sql10.freemysqlhosting.net'
+app.config['MYSQL_USER'] = 'sql10705402'
+app.config['MYSQL_PASSWORD'] = '41BzzCqkNN'
+app.config['MYSQL_DB'] = 'sql10705402'
 
 mysql = pymysql.connect(
     host=app.config['MYSQL_HOST'],
@@ -193,4 +193,4 @@ def generar_reporte():
     return render_template('./secciones/reporte.html', data=data)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True)
