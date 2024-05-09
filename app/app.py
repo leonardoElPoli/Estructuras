@@ -160,6 +160,30 @@ def seccion1():
 def seccion2():
     return render_template('./secciones/seccion2.html')
 
+@app.route('/seccion3.html')
+def seccion3():
+    return render_template('./secciones/seccion3.html')
+
+@app.route('/seccion4.html')
+def seccion4():
+    return render_template('./secciones/seccion4.html')
+
+@app.route('/seccion5.html')
+def seccion5():
+    return render_template('./secciones/seccion5.html')
+
+@app.route('/seccion6.html')
+def seccion6():
+    return render_template('./secciones/seccion6.html')
+
+@app.route('/seccion7.html')
+def seccion7():
+    return render_template('./secciones/seccion7.html')
+
+@app.route('/seccion8.html')
+def seccion8():
+    return render_template('./secciones/seccion8.html')
+
 @app.route('/generar_reporte')
 def generar_reporte():
     cur = mysql.cursor()

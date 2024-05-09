@@ -31,7 +31,6 @@
             width: 60%;
             max-width: 400px;
             margin: 20px auto;
-            /* Ajustamos el margen superior e inferior para centrar la imagen */
             display: block;
         }
 
@@ -212,12 +211,12 @@
                 <div class="resultado-box">
                     <h2>Resultados</h2>
                     <div class="resultado-item">
-                        <h3>RAy</h3>
-                        <span id="rayResultado"></span>
+                        <h3>RA</h3>
+                        <span id="raResultado"></span>
                     </div>
                     <div class="resultado-item">
-                        <h3>RBy</h3>
-                        <span id="rByResultado"></span>
+                        <h3>RB</h3>
+                        <span id="rbResultado"></span>
                     </div>
                 </div>
             </div>
@@ -254,12 +253,12 @@
             }
 
             // Realizar los cálculos
-            var ray = w * l / 2;
-            var rBy = w * l / 2;
+            var ra = w * l / 2;
+            var rb = w * l / 2;
 
             // Mostrar los resultados
-            document.getElementById("rayResultado").textContent = ray;
-            document.getElementById("rByResultado").textContent = rBy;
+            document.getElementById("raResultado").textContent = ra;
+            document.getElementById("rbResultado").textContent = rb;
 
             // Deshabilitar campos y botón calcular
             document.getElementById("W").disabled = true;
@@ -288,8 +287,8 @@
             document.getElementById("recalcular").disabled = true;
 
             // Limpiar resultados
-            document.getElementById("rayResultado").textContent = "";
-            document.getElementById("rByResultado").textContent = "";
+            document.getElementById("raResultado").textContent = "";
+            document.getElementById("rbResultado").textContent = "";
         }
     </script>
 </body>
