@@ -3,12 +3,22 @@ import re
 import pathlib
 import requests
 from flask import Flask, make_response, redirect, render_template, session, abort, request
-import pymysql
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
 import google.auth.transport.requests
+from configuracion.configuracion import get_db, init_app
+from repositorio.reporte import *
+from repositorio.usuario import *
+from repositorio.docente import *
+from modelo.usuario import *
+from modelo.docente import *
+from controlador.reporteControlador import controladorReporte
+from controlador.vigaControlador import controladorViga
+from controlador.seccionControlador import controladorSeccion
 
-app = Flask(__name__)
+template_dir = os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+template_dir = os.path.join(template_dir, 'vista')
+app = Flask(__name__, template_folder='vista')
 app.secret_key = "leo"
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
@@ -17,18 +27,7 @@ app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'estructuras'
 
-mysql = pymysql.connect(
-    host=app.config['MYSQL_HOST'],
-    user=app.config['MYSQL_USER'],
-    password=app.config['MYSQL_PASSWORD'],
-    db=app.config['MYSQL_DB']
-)
-
-if mysql is not None:
-    print("Conexión exitosa")
-else:
-    print("Error al conectar")
-
+init_app(app)
 constante_estudiante = 'ESTUDIANTE'
 constante_docente = 'DOCENTE'
 
@@ -55,7 +54,7 @@ def index():
     user_type = request.cookies.get("user_type")
     if user_token:
         session["google_id"] = user_token
-        if user_type == 'DOCENTE':
+        if user_type == constante_docente:
             return render_template('indexDocente.html')
         else:
             return render_template('index.html')
@@ -89,13 +88,10 @@ def callback():
     user_name = id_info.get('name')
     user_email = id_info.get('email')
 
-    #if not re.search(r'@elpoli.edu.co', user_email):
-        #return render_template('mensaje_error.html')
+    if not re.search(r'@elpoli.edu.co', user_email):
+        return render_template('mensaje_error.html')
 
-    cur2 = mysql.cursor()
-    cur2.execute('SELECT nombre,correo,tipo_usuario FROM usuarios WHERE id = %s', (user_id,))
-    result = cur2.fetchone()
-    cur2.close()
+    result = validar_usuario_existente(user_id)
 
     if result is not None:
         if result[2] == constante_docente:
@@ -113,34 +109,16 @@ def callback():
         
         if re.search(r'\d', user_email):
             insertar_reporte_usuario(user_name,user_email)
-            cur = mysql.cursor()
-            cur.execute('INSERT INTO usuarios (id, nombre, correo, tipo_usuario) VALUES (%s, %s, %s, %s)', (user_id, user_name, user_email, constante_estudiante))
-            mysql.commit()
-            cur.close()
+            insertar_usuario(Usuario(user_id, user_name, user_email))
             response = make_response(redirect("/"))
             response.set_cookie("user_token", user_id, max_age=3600)
             response.set_cookie('user_type', constante_estudiante, max_age=3600)
-            #return response
-
         else:
-            cur = mysql.cursor()
-            cur.execute('INSERT INTO usuarios (id, nombre, correo, tipo_usuario) VALUES (%s, %s, %s, %s)', (user_id, user_name, user_email, constante_docente))
-            mysql.commit()
-            cur.close()
+            insertar_docente(Docente(user_id, user_name, user_email))
             response = make_response(redirect("/"))
             response.set_cookie("user_token", user_id, max_age=3600)
             response.set_cookie('user_type', constante_docente, max_age=3600)
-            #return response
     return response
-
-def insertar_reporte_usuario(user_name, user_email):
-    try:
-        cur = mysql.cursor()
-        cur.execute('INSERT INTO registro_ingresos (nombre, correo) VALUES (%s, %s)', (user_name, user_email))
-        mysql.commit()
-        cur.close()
-    except Exception as e:
-        print("Error al insertar datos:", e)
 
 @app.route('/logout')
 def logout():
@@ -152,45 +130,9 @@ def logout():
 
     return response
 
-@app.route('/seccion1.html')
-def seccion1():
-    return render_template('./secciones/seccion1.html')
-
-@app.route('/seccion2.html')
-def seccion2():
-    return render_template('./secciones/seccion2.html')
-
-@app.route('/seccion3.html')
-def seccion3():
-    return render_template('./secciones/seccion3.html')
-
-@app.route('/seccion4.html')
-def seccion4():
-    return render_template('./secciones/seccion4.html')
-
-@app.route('/seccion5.html')
-def seccion5():
-    return render_template('./secciones/seccion5.html')
-
-@app.route('/seccion6.html')
-def seccion6():
-    return render_template('./secciones/seccion6.html')
-
-@app.route('/seccion7.html')
-def seccion7():
-    return render_template('./secciones/seccion7.html')
-
-@app.route('/seccion8.html')
-def seccion8():
-    return render_template('./secciones/seccion8.html')
-
-@app.route('/generar_reporte')
-def generar_reporte():
-    cur = mysql.cursor()
-    cur.execute('SELECT * FROM registro_ingresos')
-    data = cur.fetchall()
-    cur.close()
-    return render_template('./secciones/reporte.html', data=data)
+controladorSeccion(app)
+controladorViga(app)
+controladorReporte(app,generar_reporte_ingreso)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
