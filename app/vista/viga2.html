@@ -35,6 +35,7 @@
         .contenedor-divs {
             display: flex;
             gap: 20px;
+            justify-content: center;
         }
 
         #parametros {
@@ -101,6 +102,9 @@
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
+            width: 90%;
+            max-width: 600px;
+            margin: 20px auto;
         }
 
         .resultado-box h2 {
@@ -179,6 +183,7 @@
 
 <body>
     <script type="text/javascript" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <div id="header">
         <a href="/"></a>
@@ -227,6 +232,11 @@
         </div>
     </div>
 
+    <div class="resultado-container">
+        <canvas id="diagramaCortante" width="400" height="150"></canvas>
+        <canvas id="diagramaMomento" width="400" height="150"></canvas>
+    </div>
+
     <!-- Popup para mostrar el mensaje de error -->
     <div class="popup" id="errorPopup">
         <div class="popup-content">
@@ -237,6 +247,9 @@
     </div>
 
     <script>
+        var cortanteChart = null;
+        var momentoChart = null;
+
         function calcularTabla() {
             // Obtener los valores de W y L
             var w = parseFloat(document.getElementById("W").value);
@@ -252,17 +265,16 @@
             var ra = w * l / 2;
             var rb = w * l / 2;
 
-            // Mostrar los resultados
             document.getElementById("raResultado").textContent = ra;
             document.getElementById("rbResultado").textContent = rb;
 
-            // Deshabilitar campos y botón calcular
             document.getElementById("W").disabled = true;
             document.getElementById("L").disabled = true;
             document.getElementById("calcular").disabled = true;
 
-            // Habilitar botón Recalcular
             document.getElementById("recalcular").disabled = false;
+
+            dibujarDiagramas(w, l, ra, rb);
         }
 
         function mostrarPopup() {
@@ -274,19 +286,88 @@
         }
 
         function recalcular() {
-            // Habilitar campos y botón calcular
             document.getElementById("W").disabled = false;
             document.getElementById("L").disabled = false;
             document.getElementById("calcular").disabled = false;
 
-            // Deshabilitar botón Recalcular
             document.getElementById("recalcular").disabled = true;
 
-            // Limpiar resultados
             document.getElementById("raResultado").textContent = "";
             document.getElementById("rbResultado").textContent = "";
-            document.getElementById("W").value = "";
-            document.getElementById("L").value = "";
+
+            if (cortanteChart) {
+                cortanteChart.destroy();
+                cortanteChart = null;
+            }
+            if (momentoChart) {
+                momentoChart.destroy();
+                momentoChart = null;
+            }
+
+            var canvasCortante = document.getElementById("diagramaCortante");
+            var contextoCortante = canvasCortante.getContext("2d");
+            contextoCortante.clearRect(0, 0, canvasCortante.width, canvasCortante.height);
+
+            var canvasMomento = document.getElementById("diagramaMomento");
+            var contextoMomento = canvasMomento.getContext("2d");
+            contextoMomento.clearRect(0, 0, canvasMomento.width, canvasMomento.height);
+        }
+
+        function dibujarDiagramas(w, l, ra, rb) {
+            var datosCortante = {
+                labels: [0, l / 2, l],
+                datasets: [{
+                    label: 'Diagrama de Cortante',
+                    borderColor: 'blue',
+                    backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                    data: [ra, 0, -rb],
+                    fill: true,
+                }]
+            };
+
+            var datosMomento = {
+                labels: [0, l / 2, l],
+                datasets: [{
+                    label: 'Diagrama de Momento',
+                    borderColor: 'red',
+                    backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                    data: [0, (w * l * l) / 8, 0],
+                    fill: true,
+                }]
+            };
+
+            var opciones = {
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: 'Longitud (m)'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Fuerza (N) / Momento (Nm)'
+                        }
+                    }
+                }
+            };
+
+            var ctxCortante = document.getElementById('diagramaCortante').getContext('2d');
+            cortanteChart = new Chart(ctxCortante, {
+                type: 'line',
+                data: datosCortante,
+                options: opciones
+            });
+
+            var ctxMomento = document.getElementById('diagramaMomento').getContext('2d');
+            momentoChart = new Chart(ctxMomento, {
+                type: 'line',
+                data: datosMomento,
+                options: opciones
+            });
         }
     </script>
 </body>

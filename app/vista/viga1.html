@@ -35,6 +35,7 @@
         .contenedor-divs {
             display: flex;
             gap: 20px;
+            justify-content: center;
         }
 
         #parametros {
@@ -101,6 +102,9 @@
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
+            width: 90%;
+            max-width: 600px;
+            margin: 20px auto;
         }
 
         .resultado-box h2 {
@@ -179,6 +183,7 @@
 
 <body>
     <script type="text/javascript" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <div id="header">
         <a href="/"></a>
@@ -236,6 +241,11 @@
         </div>
     </div>
 
+    <div class="resultado-container">
+        <canvas id="diagramaCortante" width="400" height="150"></canvas>
+        <canvas id="diagramaMomento" width="400" height="150"></canvas>
+    </div>
+
     <div class="popup" id="errorPopup">
         <div class="popup-content">
             <span class="popup-close" onclick="cerrarPopup()">X</span>
@@ -245,6 +255,9 @@
     </div>
 
     <script>
+        var cortanteChart = null;
+        var momentoChart = null;
+
         function calcularTabla() {
             var A = parseFloat(document.getElementById("A").value);
             var B = parseFloat(document.getElementById("B").value);
@@ -256,12 +269,12 @@
             }
 
             var L = A + B;
-            var rA = ((P * B)**2) / L;
-            var rB = ((P * A)**2) / L;
+            var rA = (P * B) / L;
+            var rB = (P * A) / L;
 
-            document.getElementById("lResultado").textContent = L;
-            document.getElementById("raResultado").textContent = rA;
-            document.getElementById("rbResultado").textContent = rB;
+            document.getElementById("lResultado").textContent = L.toFixed(2);
+            document.getElementById("raResultado").textContent = rA.toFixed(2);
+            document.getElementById("rbResultado").textContent = rB.toFixed(2);
 
             document.getElementById("P").disabled = true;
             document.getElementById("A").disabled = true;
@@ -269,6 +282,8 @@
             document.getElementById("calcular").disabled = true;
 
             document.getElementById("recalcular").disabled = false;
+
+            dibujarDiagramas(P, A, B, L, rA, rB);
         }
 
         function mostrarPopup() {
@@ -293,6 +308,80 @@
             document.getElementById("P").value = "";
             document.getElementById("A").value = "";
             document.getElementById("B").value = "";
+
+            if (cortanteChart) {
+                cortanteChart.destroy();
+                cortanteChart = null;
+            }
+            if (momentoChart) {
+                momentoChart.destroy();
+                momentoChart = null;
+            }
+
+            var canvasCortante = document.getElementById("diagramaCortante");
+            var contextoCortante = canvasCortante.getContext("2d");
+            contextoCortante.clearRect(0, 0, canvasCortante.width, canvasCortante.height);
+
+            var canvasMomento = document.getElementById("diagramaMomento");
+            var contextoMomento = canvasMomento.getContext("2d");
+            contextoMomento.clearRect(0, 0, canvasMomento.width, canvasMomento.height);
+        }
+
+        function dibujarDiagramas(P, A, B, L, rA, rB) {
+            var datosCortante = {
+                labels: [0, A, L],
+                datasets: [{
+                    label: 'Diagrama de Cortante',
+                    borderColor: 'blue',
+                    backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                    data: [rA, rA - P, -rB],
+                    fill: true,
+                }]
+            };
+
+            var datosMomento = {
+                labels: [0, A, L],
+                datasets: [{
+                    label: 'Diagrama de Momento',
+                    borderColor: 'red',
+                    backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                    data: [0, rA * A - P * (A / 2), 0],
+                    fill: true,
+                }]
+            };
+
+            var opciones = {
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: 'Longitud (m)'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Fuerza (N) / Momento (Nm)'
+                        }
+                    }
+                }
+            };
+
+            var ctxCortante = document.getElementById('diagramaCortante').getContext('2d');
+            cortanteChart = new Chart(ctxCortante, {
+                type: 'line',
+                data: datosCortante,
+                options: opciones
+            });
+
+            var ctxMomento = document.getElementById('diagramaMomento').getContext('2d');
+            momentoChart = new Chart(ctxMomento, {
+                type: 'line',
+                data: datosMomento,
+                options: opciones
+            });
         }
     </script>
 </body>
