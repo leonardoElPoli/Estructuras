@@ -3,6 +3,7 @@
 
 <head>
     <title>Viga simplemente apoyada con carga distribuida rectangular en toda su longitud</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             text-align: center;
@@ -223,11 +224,10 @@
             <div class="button-container">
                 <button id="calcular" onclick="calcularTabla()">Calcular</button>
             </div>
-
+            <canvas id="momentoChart" width="400" height="200"></canvas>
         </div>
     </div>
 
-    <!-- Popup para mostrar el mensaje de error -->
     <div class="popup" id="errorPopup">
         <div class="popup-content">
             <span class="popup-close" onclick="cerrarPopup()">X</span>
@@ -263,7 +263,46 @@
 
             // Habilitar botón Recalcular
             document.getElementById("recalcular").disabled = false;
+
+            // Generar el diagrama de momento
+            generarDiagramaMomento(w, l);
         }
+
+        function generarDiagramaMomento(w, l) {
+            var canvas = document.getElementById("momentoChart");
+            var ctx = canvas.getContext("2d");
+
+            // Datos del diagrama de momento
+            var datos = {
+                labels: ['A', 'B'],
+                datasets: [{
+                    label: 'Momento',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                    data: [0, w * l / 2]
+                }]
+            };
+
+            // Opciones del diagrama de momento
+            var opciones = {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            };
+
+            // Crear el gráfico de momento
+            var momentoChart = new Chart(ctx, {
+                type: 'bar',
+                data: datos,
+                options: opciones
+            });
+        }
+
 
         function mostrarPopup() {
             document.getElementById("errorPopup").style.display = "block";
@@ -287,6 +326,10 @@
             document.getElementById("rbResultado").textContent = "";
             document.getElementById("W").value = "";
             document.getElementById("L").value = "";
+
+            var canvas = document.getElementById("momentoChart");
+            var ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
     </script>
 </body>

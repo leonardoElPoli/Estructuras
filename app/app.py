@@ -22,10 +22,10 @@ app = Flask(__name__, template_folder='vista')
 app.secret_key = "leo"
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'estructuras'
+app.config['MYSQL_HOST'] = 'sql10.freemysqlhosting.net'
+app.config['MYSQL_USER'] = 'sql10712034'
+app.config['MYSQL_PASSWORD'] = 'HVypdumBTb'
+app.config['MYSQL_DB'] = 'sql10712034'
 
 init_app(app)
 constante_estudiante = 'ESTUDIANTE'
@@ -36,7 +36,7 @@ client_secrets_file = os.path.join(pathlib.Path(__file__).parent, "client_secret
 flow = Flow.from_client_secrets_file(
     client_secrets_file=client_secrets_file,
     scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email", "openid"],
-    redirect_uri="http://127.0.0.1:5000/callback"
+    redirect_uri="https://estructuras-nine.vercel.app/callback"
 )
 
 def login_is_required(function):
