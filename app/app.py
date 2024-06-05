@@ -23,9 +23,9 @@ app.secret_key = "leo"
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
 app.config['MYSQL_HOST'] = 'sql10.freemysqlhosting.net'
-app.config['MYSQL_USER'] = 'sql10705402'
-app.config['MYSQL_PASSWORD'] = '41BzzCqkNN'
-app.config['MYSQL_DB'] = 'sql10705402'
+app.config['MYSQL_USER'] = 'sql10712034'
+app.config['MYSQL_PASSWORD'] = 'HVypdumBTb'
+app.config['MYSQL_DB'] = 'sql10712034'
 
 init_app(app)
 constante_estudiante = 'ESTUDIANTE'
