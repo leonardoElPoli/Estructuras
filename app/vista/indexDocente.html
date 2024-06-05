@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estructuras Civiles</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0074ff, #00e2d0);
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            width: 100%;
+            height: auto;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo {
+            width: 10%;
+            height: auto;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px;
+            max-width: 800px;
+        }
+
+        .button {
+            width: calc(50% - 20px);
+            margin-bottom: 20px;
+            text-align: center;
+            border: 2px solid #0074ff;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: #fff;
+            transition: transform 0.2s ease;
+        }
+
+        .button:hover {
+            transform: scale(1.05);
+        }
+
+        .button img {
+            width: 80%;
+            height: auto;
+            object-fit: cover;
+        }
+
+        .logout-button {
+            display: flex;
+            align-items: center;
+            margin-left: 20px;
+        }
+
+        .logout-button a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #fff;
+            position: relative;
+            background: #ff5555;
+            padding: 12px 20px;
+            border-radius: 10px;
+        }
+
+        .logout-button a:hover {
+            background: #ff0000;
+        }
+
+        .logout-button span {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logout-button">
+            <a href="/logout">
+                <span>Cerrar Sesión</span>
+            </a>
+        </div>
+        <div class="title">Análisis estructuras</div>
+        <img src="https://www.politecnicojic.edu.co/images/fotos/2021/calidad-academica-y-humana.jpg"
+            alt="Logo de Estructuras Civiles" class="logo" />
+    </header>
+
+    <div class="container">
+        <!-- Aquí van los botones -->
+        <div class="button">
+            <a href="viga1.html">
+                <img src="{{ url_for('static', filename='viga1.jpg') }}" alt="viga1" />
+            </a>
+        </div>
+        <div class="button">
+            <a href="viga2.html">
+                <img src="{{ url_for('static', filename='viga2.jpg') }}" alt="viga2" />
+            </a>
+        </div>
+        <div class="button">
+            <a href="viga3.html">
+                <img src="{{ url_for('static', filename='viga3.jpg') }}" alt="viga3" />
+            </a>
+        </div>
+        <div class="button">
+            <a href="viga5.html">
+                <img src="{{ url_for('static', filename='viga5.jpg') }}" alt="viga5" />
+            </a>
+        </div>
+        <div class="button">
+            <a href="viga6.html">
+                <img src="{{ url_for('static', filename='viga6.jpg') }}" alt="viga6" />
+            </a>
+        </div>
+        <div class="button">
+            <a href="viga8.html">
+                <img src="{{ url_for('static', filename='viga8.jpg') }}" alt="viga8" />
+            </a>
+        </div>
+        <div class="button">
+            <a href="viga10.html">
+                <img src="{{ url_for('static', filename='viga10.jpg') }}" alt="viga10" />
+            </a>
+        </div>
+        <div class="button">
+            <a href="viga4.html">
+                <img src="{{ url_for('static', filename='viga4.jpg') }}" alt="viga4" />
+            </a>
+        </div>
+        <div class="button">
+            <a href="viga7.html">
+                <img src="{{ url_for('static', filename='viga7.jpg') }}" alt="viga7" />
+            </a>
+        </div>
+        <div class="button">
+            <a href="viga9.html">
+                <img src="{{ url_for('static', filename='viga9.jpg') }}" alt="viga9" />
+            </a>
+        </div>
+        <div class="button">
+            <a href="viga11.html">
+                <img src="{{ url_for('static', filename='viga11.jpg') }}" alt="viga11" />
+            </a>
+        </div>
+        <div class="button">
+            <a href="viga12.html">
+                <img src="{{ url_for('static', filename='viga12.jpg') }}" alt="viga12" />
+            </a>
+        </div>
+        <div class="button">
+            <a href="viga13.html">
+                <img src="{{ url_for('static', filename='viga13.jpg') }}" alt="viga13" />
+            </a>
+        </div>
+        <div class="button">
+            <a href="viga14.html">
+                <img src="{{ url_for('static', filename='viga14.jpg') }}" alt="viga14" />
+            </a>
+        </div>
+        <div class="button">
+            <a href="viga15.html">
+                <img src="{{ url_for('static', filename='viga15.jpg') }}" alt="viga15" />
+            </a>
+        </div>
+
+        <div class="button">
+            <a href="logoSecciones.html">
+                <img src="{{ url_for('static', filename='logoSecciones.jpg') }}" alt="logoSecciones" />
+            </a>
+        </div>
+        <div class="button">
+            <a href="/generar_reporte">
+                <img src="{{ url_for('static', filename='estudiantes.png') }}" alt="Reporte Estudiantes" />
+            </a>
+        </div>
+    </div>
+</body>
+</html>
