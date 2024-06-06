@@ -88,8 +88,8 @@ def callback():
     user_name = id_info.get('name')
     user_email = id_info.get('email')
 
-    #if not re.search(r'@elpoli.edu.co', user_email):
-        #return render_template('mensaje_error.html')
+    if not re.search(r'@elpoli.edu.co', user_email):
+        return render_template('mensaje_error.html')
 
     result = validar_usuario_existente(user_id)
 
