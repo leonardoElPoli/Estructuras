@@ -75,7 +75,7 @@
         }
 
         button {
-            background: #0074ff;
+            background: #ff0000;
             color: #fff;
             padding: 10px 20px;
             border: none;
@@ -105,6 +105,7 @@
             width: 90%;
             max-width: 600px;
             margin: 20px auto;
+            
         }
 
         .resultado-box h2 {
@@ -218,15 +219,15 @@
                 <div class="resultado-box">
                     <h2>Resultados</h2>
                     <div class="resultado-item">
-                        <h3>L</h3>
+                        <h3>L:</h3>
                         <span id="lResultado"></span>
                     </div>
                     <div class="resultado-item">
-                        <h3>RA</h3>
+                        <h3>RA:</h3>
                         <span id="raResultado"></span>
                     </div>
                     <div class="resultado-item">
-                        <h3>RB</h3>
+                        <h3>RB:</h3>
                         <span id="rbResultado"></span>
                     </div>
                 </div>
@@ -272,7 +273,7 @@
             var rA = (P * B) / L;
             var rB = (P * A) / L;
 
-            document.getElementById("lResultado").textContent = L.toFixed(2);
+            document.getElementById("lResultado").textContent = L;
             document.getElementById("raResultado").textContent = rA.toFixed(2);
             document.getElementById("rbResultado").textContent = rB.toFixed(2);
 

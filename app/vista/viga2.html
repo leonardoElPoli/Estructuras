@@ -75,7 +75,7 @@
         }
 
         button {
-            background: #0074ff;
+            background: #ff0000;
             color: #fff;
             padding: 10px 20px;
             border: none;
@@ -211,11 +211,11 @@
                 <div class="resultado-box">
                     <h2>Resultados</h2>
                     <div class="resultado-item">
-                        <h3>RA</h3>
+                        <h3>RA:</h3>
                         <span id="raResultado"></span>
                     </div>
                     <div class="resultado-item">
-                        <h3>RB</h3>
+                        <h3>RB:</h3>
                         <span id="rbResultado"></span>
                     </div>
                 </div>
@@ -237,7 +237,6 @@
         <canvas id="diagramaMomento" width="400" height="150"></canvas>
     </div>
 
-    <!-- Popup para mostrar el mensaje de error -->
     <div class="popup" id="errorPopup">
         <div class="popup-content">
             <span class="popup-close" onclick="cerrarPopup()">X</span>
@@ -251,22 +250,19 @@
         var momentoChart = null;
 
         function calcularTabla() {
-            // Obtener los valores de W y L
-            var w = parseFloat(document.getElementById("W").value);
-            var l = parseFloat(document.getElementById("L").value);
+            var W = parseFloat(document.getElementById("W").value);
+            var L = parseFloat(document.getElementById("L").value);
 
-            // Verificar que los valores sean numéricos
-            if (isNaN(w) || isNaN(l)) {
+            if (isNaN(W) || isNaN(L)) {
                 mostrarPopup();
                 return;
             }
 
-            // Realizar los cálculos
-            var ra = w * l / 2;
-            var rb = w * l / 2;
+            var rA = W * L / 2;
+            var rB = W * L / 2;
 
-            document.getElementById("raResultado").textContent = ra;
-            document.getElementById("rbResultado").textContent = rb;
+            document.getElementById("raResultado").textContent = rA.toFixed(2);
+            document.getElementById("rbResultado").textContent = rB;
 
             document.getElementById("W").disabled = true;
             document.getElementById("L").disabled = true;
@@ -274,7 +270,7 @@
 
             document.getElementById("recalcular").disabled = false;
 
-            dibujarDiagramas(w, l, ra, rb);
+            generarGraficas(W, L, rA, rB);
         }
 
         function mostrarPopup() {
@@ -294,6 +290,8 @@
 
             document.getElementById("raResultado").textContent = "";
             document.getElementById("rbResultado").textContent = "";
+            document.getElementById("W").value = "";
+            document.getElementById("L").value = "";
 
             if (cortanteChart) {
                 cortanteChart.destroy();
@@ -313,25 +311,25 @@
             contextoMomento.clearRect(0, 0, canvasMomento.width, canvasMomento.height);
         }
 
-        function dibujarDiagramas(w, l, ra, rb) {
+        function generarGraficas(W, L, rA, rB) {
             var datosCortante = {
-                labels: [0, l / 2, l],
+                labels: [0, L / 2, L],
                 datasets: [{
                     label: 'Diagrama de Cortante',
                     borderColor: 'blue',
                     backgroundColor: 'rgba(0, 0, 255, 0.1)',
-                    data: [ra, 0, -rb],
+                    data: [rA, 0, -rB],
                     fill: true,
                 }]
             };
 
             var datosMomento = {
-                labels: [0, l / 2, l],
+                labels: [0, L / 2, L],
                 datasets: [{
                     label: 'Diagrama de Momento',
                     borderColor: 'red',
                     backgroundColor: 'rgba(255, 0, 0, 0.1)',
-                    data: [0, (w * l * l) / 8, 0],
+                    data: [0, (W * L * L) / 8, 0],
                     fill: true,
                 }]
             };

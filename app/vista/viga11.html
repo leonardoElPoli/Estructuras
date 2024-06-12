@@ -35,6 +35,7 @@
         .contenedor-divs {
             display: flex;
             gap: 20px;
+            justify-content: center;
         }
 
         #parametros {
@@ -74,7 +75,7 @@
         }
 
         button {
-            background: #0074ff;
+            background: #ff0000;
             color: #fff;
             padding: 10px 20px;
             border: none;
@@ -101,6 +102,9 @@
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
+            width: 90%;
+            max-width: 600px;
+            margin: 20px auto;
         }
 
         .resultado-box h2 {
@@ -179,6 +183,7 @@
 
 <body>
     <script type="text/javascript" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <div id="header">
         <a href="/"></a>
@@ -211,15 +216,15 @@
                 <div class="resultado-box">
                     <h2>Resultados</h2>
                     <div class="resultado-item">
-                        <h3>L</h3>
+                        <h3>L:</h3>
                         <span id="lResultado"></span>
                     </div>
                     <div class="resultado-item">
-                        <h3>RA</h3>
+                        <h3>RA:</h3>
                         <span id="raResultado"></span>
                     </div>
                     <div class="resultado-item">
-                        <h3>RB</h3>
+                        <h3>RB:</h3>
                         <span id="rbResultado"></span>
                     </div>
                 </div>
@@ -234,6 +239,11 @@
         </div>
     </div>
 
+    <div class="resultado-container">
+        <canvas id="diagramaCortante" width="400" height="150"></canvas>
+        <canvas id="diagramaMomento" width="400" height="150"></canvas>
+    </div>
+
     <div class="popup" id="errorPopup">
         <div class="popup-content">
             <span class="popup-close" onclick="cerrarPopup()">X</span>
@@ -243,6 +253,9 @@
     </div>
 
     <script>
+        var cortanteChart = null;
+        var momentoChart = null;
+
         function calcularTabla() {
             var W = parseFloat(document.getElementById("W").value);
             var A = parseFloat(document.getElementById("A").value);
@@ -254,19 +267,107 @@
             }
 
             var L = A + B;
-            var rA = (W * A) * (A/3 + B) / (2 * L) + (W * B**2) / (3 * L)
-            var rB = (W * A**2) / (3 * L) + 0.5 * (W * B) * (B/3 + A);
+            var rA = (W * A) * (A / 3 + B) / (2 * L) + (W * B ** 2) / (3 * L);
+            var rB = (W * A ** 2) / (3 * L) + 0.5 * (W * B) * (B / 3 + A);
 
             document.getElementById("lResultado").textContent = L;
-            document.getElementById("raResultado").textContent = rA;
-            document.getElementById("rbResultado").textContent = rB;
+            document.getElementById("raResultado").textContent = rA.toFixed(2);
+            document.getElementById("rbResultado").textContent = rB.toFixed(2);
 
             document.getElementById("W").disabled = true;
             document.getElementById("A").disabled = true;
             document.getElementById("B").disabled = true;
             document.getElementById("calcular").disabled = true;
-
             document.getElementById("recalcular").disabled = false;
+
+            generarGraficas(W, A, B, L, rA, rB);
+        }
+
+        function generarGraficas(W, A, B, L, rA, rB) {
+            var xValues = [];
+            var cortanteValues = [];
+            var momentoValues = [];
+
+            for (var x = 0; x <= L; x += L / 100) {
+                var qx = (x <= A) ? W * (x / A) : W * ((L - x) / B);
+                var Vx = rA - ((qx * x) / 2);
+                var Mx = rA * x - (qx * x * x / 6);
+                xValues.push(x);
+                cortanteValues.push(Vx);
+                momentoValues.push(Mx);
+            }
+
+            cortanteChart = new Chart(document.getElementById('diagramaCortante').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        label: 'Diagrama de Cortante',
+                        data: cortanteValues,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        fill: true,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Diagrama de Cortante'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                callback: function (value, index, values) {
+                                    return value.toFixed(2); 
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            momentoChart = new Chart(document.getElementById('diagramaMomento').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        label: 'Diagrama de Momento',
+                        data: momentoValues,
+                        borderColor: 'rgba(153, 102, 255, 1)',
+                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                        fill: true,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Diagrama de Momento'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                callback: function (value, index, values) {
+                                    return value.toFixed(2);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         function mostrarPopup() {
@@ -282,15 +383,17 @@
             document.getElementById("A").disabled = false;
             document.getElementById("B").disabled = false;
             document.getElementById("calcular").disabled = false;
-
             document.getElementById("recalcular").disabled = true;
 
             document.getElementById("lResultado").textContent = "";
             document.getElementById("raResultado").textContent = "";
             document.getElementById("rbResultado").textContent = "";
-            document.getElementById("W2").value = "";
+            document.getElementById("W").value = "";
             document.getElementById("A").value = "";
             document.getElementById("B").value = "";
+
+            if (cortanteChart) cortanteChart.destroy();
+            if (momentoChart) momentoChart.destroy();
         }
     </script>
 </body>

@@ -98,9 +98,10 @@
 </head>
 <body>
     <header>
-        <div id="header">
-            <a href="/"></a>
-            <button onclick="window.location.href = '/'">Volver</button>
+        <div class="logout-button">
+            <a href="/">
+                <span>Volver</span>
+            </a>
         </div>
         <div class="title">Secciones Transversales</div>
         <img src="https://www.politecnicojic.edu.co/images/fotos/2021/calidad-academica-y-humana.jpg"
@@ -108,7 +109,6 @@
     </header>
 
     <div class="container">
-        <!-- Aquí van los botones -->
         <div class="button">
             <a href="seccion1.html">
                 <img src="{{ url_for('static', filename='seccion1.jpg') }}" alt="seccion1" />

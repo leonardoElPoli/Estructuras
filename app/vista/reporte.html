@@ -1,3 +1,4 @@
+reporte
 <!DOCTYPE html>
 <html>
 <head>
@@ -30,7 +31,7 @@
             color: #fff;
             padding: 20px;
             margin: 0;
-            flex: 1; /* Para centrar horizontalmente */
+            flex: 1;
         }
 
         .back-button {
@@ -41,7 +42,7 @@
             cursor: pointer;
             padding: 10px 20px;
             text-decoration: none;
-            margin-right: 20px; /* Agregamos espacio entre el botón y el título */
+            margin-right: 20px;
         }
 
         .back-button:hover {
@@ -65,6 +66,44 @@
             background-color: #0074ff;
             color: #fff;
         }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .pagination button {
+            background: #0074ff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 10px 20px;
+            margin: 0 5px;
+        }
+
+        .pagination button:hover {
+            background: #00e2d0;
+        }
+
+        .pagination button.disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .search-container {
+            margin: 20px 0;
+        }
+
+        .search-container input {
+            padding: 10px;
+            width: calc(100% - 22px);
+            margin: 0 auto;
+            display: block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -73,6 +112,9 @@
         <h1>Reporte de Usuarios</h1>
     </div>
     <div class="container">
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Buscar por nombre, correo o fecha" onkeyup="searchTable()">
+        </div>
         <table>
             <thead>
                 <tr>
@@ -81,7 +123,7 @@
                     <th>Fecha Ingreso</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="table-body">
                 {% for row in data %}
                 <tr>
                     <td>{{ row[0] }}</td>
@@ -91,6 +133,69 @@
                 {% endfor %}
             </tbody>
         </table>
+        <div class="pagination">
+            <button id="prev-button" onclick="prevPage()">Anterior</button>
+            <button id="next-button" onclick="nextPage()">Siguiente</button>
+        </div>
     </div>
+
+    <script>
+        const rowsPerPage = 10;
+        let currentPage = 1;
+        const rows = Array.from(document.querySelectorAll('tbody tr'));
+
+        function displayTable(page) {
+            const tableBody = document.getElementById('table-body');
+            tableBody.innerHTML = '';
+
+            const start = (page - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            const paginatedItems = rows.slice(start, end);
+
+            paginatedItems.forEach(row => {
+                tableBody.appendChild(row);
+            });
+
+            document.getElementById('prev-button').disabled = page === 1;
+            document.getElementById('next-button').disabled = end >= rows.length;
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                displayTable(currentPage);
+            }
+        }
+
+        function nextPage() {
+            if ((currentPage * rowsPerPage) < rows.length) {
+                currentPage++;
+                displayTable(currentPage);
+            }
+        }
+
+        displayTable(currentPage);
+
+        function searchTable() {
+            const input = document.getElementById('search-input').value.toLowerCase();
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                const matches = Array.from(cells).some(cell => cell.innerText.toLowerCase().includes(input));
+                row.style.display = matches ? '' : 'none';
+            });
+            currentPage = 1;
+            updatePagination();
+        }
+
+        function updatePagination() {
+            const visibleRows = rows.filter(row => row.style.display !== 'none');
+            const totalPages = Math.ceil(visibleRows.length / rowsPerPage);
+
+            document.getElementById('prev-button').disabled = currentPage === 1;
+            document.getElementById('next-button').disabled = currentPage >= totalPages;
+
+            displayTable(currentPage);
+        }
+    </script>
 </body>
 </html>
