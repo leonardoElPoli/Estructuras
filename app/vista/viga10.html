@@ -291,8 +291,8 @@
             var rB = (W1 * A**2) / (2 * L) + A * (W2 - W1) * (2 * A / 3);
 
             document.getElementById("lResultado").textContent = L;
-            document.getElementById("raResultado").textContent = rA;
-            document.getElementById("rbResultado").textContent = rB;
+            document.getElementById("raResultado").textContent = rA.toFixed(2);
+            document.getElementById("rbResultado").textContent = rB.toFixed(2);
 
             document.getElementById("W1").disabled = true;
             document.getElementById("W2").disabled = true;
@@ -302,7 +302,7 @@
 
             document.getElementById("recalcular").disabled = false;
 
-            generarGraficas(L, W1, W2, rA)
+            generarGraficas(L, W1, W2, rA);
         }
 
         function mostrarPopup() {

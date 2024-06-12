@@ -267,6 +267,9 @@
     </div>
 
     <script>
+        var cortanteChart;
+        var momentoChart;
+        
         function calcularTabla() {
             var W1 = parseFloat(document.getElementById("W1").value);
             var W2 = parseFloat(document.getElementById("W2").value);
@@ -288,8 +291,8 @@
             var rB = (W1 * B**2) / (2 * L) + (W2 - W1) * A**2 / (3 * L) + (W2 * B) * (B/3 + A) / (6 * L);
 
             document.getElementById("lResultado").textContent = L;
-            document.getElementById("raResultado").textContent = rA;
-            document.getElementById("rbResultado").textContent = rB;
+            document.getElementById("raResultado").textContent = rA.toFixed(2);
+            document.getElementById("rbResultado").textContent = rB.toFixed(2);
 
             document.getElementById("W1").disabled = true;
             document.getElementById("W2").disabled = true;
