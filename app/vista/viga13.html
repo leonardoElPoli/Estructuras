@@ -269,7 +269,7 @@
     <script>
         var cortanteChart;
         var momentoChart;
-        
+
         function calcularTabla() {
             var W1 = parseFloat(document.getElementById("W1").value);
             var W2 = parseFloat(document.getElementById("W2").value);
@@ -287,7 +287,7 @@
             }
 
             var L = A + B;
-            var rA = (W2 * B**2) / (3 * L) + (W1 * A / L) * (A/2 + b) + 0.5 * (W2 - W1) * (A * L) * (A/3 + B);
+            var rA = (W2 * B**2) / (3 * L) + (W1 * A / L) * (A/2 + B) + 0.5 * (W2 - W1) * (A * L) * (A/3 + B);
             var rB = (W1 * B**2) / (2 * L) + (W2 - W1) * A**2 / (3 * L) + (W2 * B) * (B/3 + A) / (6 * L);
 
             document.getElementById("lResultado").textContent = L;
